@@ -3,8 +3,8 @@ class Player {
         this.game = game;
         this.x = 100;
         this.y = 100;
-        this.width = 40;
-        this.height = 40;
+        this.width = 40;  // EZ KELL AZ ÜTKÖZÉSHEZ!
+        this.height = 40; // EZ KELL AZ ÜTKÖZÉSHEZ!
         this.vx = 0;
         this.vy = 0;
         this.speed = 1.2;
