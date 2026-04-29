@@ -15,30 +15,39 @@ class Physics {
     checkMapCollisions(entity, map) {
         if (!map) return;
 
-        // 1. VILÁGHATÁROK (Láthatatlan falak a két végén)
-        // Bal szélső fal
+        // --- LÁTHATATLAN FALAK (X TENGELY) ---
+        // A magasságtól (Y) függetlenül mindig működnek
+
+        // 1. Bal oldali végtelen fal
         if (entity.x < 0) {
             entity.x = 0;
             entity.vx = 0;
         }
 
-        // Jobb szélső fal (A pálya szélessége = oszlopok száma * tileSize)
+        // 2. Jobb oldali végtelen fal
+        // Kiszámoljuk a pálya teljes szélességét az oszlopok alapján
         const mapWidth = map[0].length * this.tileSize;
         if (entity.x + entity.width > mapWidth) {
             entity.x = mapWidth - entity.width;
             entity.vx = 0;
         }
 
-        // 2. PADLÓ ÜTKÖZÉS
+        // --- PADLÓ ÜTKÖZÉS (Y TENGELY) ---
         let left = Math.floor(entity.x / this.tileSize);
         let right = Math.floor((entity.x + entity.width - 2) / this.tileSize);
         let bottom = Math.floor((entity.y + entity.height) / this.tileSize);
 
-        if (map[bottom] && (map[bottom][left] === 1 || map[bottom][right] === 1)) {
-            entity.y = bottom * this.tileSize - entity.height;
-            entity.vy = 0;
-            entity.grounded = true;
+        // Csak akkor nézzük az ütközést, ha a térképen belül vagyunk függőlegesen
+        if (map[bottom]) {
+            if (map[bottom][left] === 1 || map[bottom][right] === 1) {
+                entity.y = bottom * this.tileSize - entity.height;
+                entity.vy = 0;
+                entity.grounded = true;
+            } else {
+                entity.grounded = false;
+            }
         } else {
+            // Ha kirepülne a pálya fölé vagy alá, ne legyen grounded
             entity.grounded = false;
         }
     }
