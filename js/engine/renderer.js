@@ -3,12 +3,10 @@ class Renderer {
         this.ctx = ctx;
         this.canvas = canvas;
         this.grassSprite = new Image();
-        // GitHubon ez az útvonal a biztos:
         this.grassSprite.src = 'assets/level/grass.png';
         
-        this.grassSprite.onerror = () => {
-            console.error("Hiba: A grass.png nem található az assets/level/ mappában!");
-        };
+        // Ez a méret határozza meg a blokkok nagyságát
+        this.tileSize = 80; 
     }
 
     clear() {
@@ -18,23 +16,27 @@ class Renderer {
 
     drawMap(map, camera) {
         if (!map) return;
-        const tileSize = 50;
+        
+        // Kikapcsoljuk az elmosódást a nagyításhoz
+        this.ctx.imageSmoothingEnabled = false;
 
         for (let row = 0; row < map.length; row++) {
             for (let col = 0; col < map[row].length; col++) {
                 const tile = map[row][col];
+                const x = col * this.tileSize;
+                const y = row * this.tileSize;
+
                 if (tile === 1) {
-                    // Ha betöltött a kép, azt rajzoljuk
                     if (this.grassSprite.complete && this.grassSprite.naturalWidth !== 0) {
-                        this.ctx.drawImage(this.grassSprite, col * tileSize, row * tileSize, tileSize, tileSize);
+                        this.ctx.drawImage(this.grassSprite, x, y, this.tileSize, this.tileSize);
                     } else {
-                        // Ha nincs kép, sötétzöld téglalap (hogy ne kék legyen!)
+                        // Fallback, ha a kép nem töltene be
                         this.ctx.fillStyle = "#1a3317";
-                        this.ctx.fillRect(col * tileSize, row * tileSize, tileSize, tileSize);
+                        this.ctx.fillRect(x, y, this.tileSize, this.tileSize);
                     }
                 } else if (tile === 3) {
-                    this.ctx.fillStyle = "#ff00ea"; // Cél
-                    this.ctx.fillRect(col * tileSize, row * tileSize, tileSize, tileSize);
+                    this.ctx.fillStyle = "#ff00ea";
+                    this.ctx.fillRect(x, y, this.tileSize, this.tileSize);
                 }
             }
         }
@@ -42,7 +44,7 @@ class Renderer {
 
     drawUI(player) {
         this.ctx.fillStyle = "#00d4ff";
-        this.ctx.font = "14px 'Courier New'";
-        this.ctx.fillText(`X: ${Math.floor(player.x)} Y: ${Math.floor(player.y)}`, 20, 40);
+        this.ctx.font = "bold 16px monospace";
+        this.ctx.fillText(`X: ${Math.floor(player.x)}`, 20, 30);
     }
 }
