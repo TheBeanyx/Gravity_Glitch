@@ -45,7 +45,7 @@ class NightmareEngine {
     draw() {
         this.renderer.clear();
         this.ctx.save();
-        // Kamera eltolás csak vízszintesen
+        // Kamera eltolás
         this.ctx.translate(Math.floor(-this.camera.x), 0);
         
         if (typeof LEVEL_DATA !== 'undefined') {
