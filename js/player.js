@@ -5,8 +5,13 @@
 class Player {
     constructor(game) {
         this.game = game;
-        this.width = 32;
-        this.height = 48;
+        this.x = 0;
+        this.y = 0;
+        this.width = 40;  // Legyen szélessége
+        this.height = 40; // Legyen magassága
+        this.vx = 0;
+        this.vy = 0;
+        this.grounded = false;
         
         // Pozíció és sebesség vektorok
         this.x = 100;
