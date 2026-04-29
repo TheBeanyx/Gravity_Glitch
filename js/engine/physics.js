@@ -10,45 +10,38 @@ class Physics {
         entity.x += entity.vx;
         entity.y += entity.vy;
         entity.vx *= this.friction;
-    }
 
-    checkMapCollisions(entity, map) {
-        if (!map) return;
-
-        // --- LÁTHATATLAN FALAK (X TENGELY) ---
-        // A magasságtól (Y) függetlenül mindig működnek
-
-        // 1. Bal oldali végtelen fal
+        // AZONNALI KORREKCIÓ (Végtelen falak)
+        // Bal oldal:
         if (entity.x < 0) {
             entity.x = 0;
             entity.vx = 0;
         }
+    }
 
-        // 2. Jobb oldali végtelen fal
-        // Kiszámoljuk a pálya teljes szélességét az oszlopok alapján
+    checkMapCollisions(entity, map) {
+        if (!map || !map[0]) return;
+
+        // Jobb oldali fal kényszerítése:
         const mapWidth = map[0].length * this.tileSize;
-        if (entity.x + entity.width > mapWidth) {
-            entity.x = mapWidth - entity.width;
+        if (entity.x + (entity.width || 40) > mapWidth) {
+            entity.x = mapWidth - (entity.width || 40);
             entity.vx = 0;
         }
 
-        // --- PADLÓ ÜTKÖZÉS (Y TENGELY) ---
+        // Padló ütközés:
         let left = Math.floor(entity.x / this.tileSize);
-        let right = Math.floor((entity.x + entity.width - 2) / this.tileSize);
-        let bottom = Math.floor((entity.y + entity.height) / this.tileSize);
+        let right = Math.floor((entity.x + (entity.width || 40) - 2) / this.tileSize);
+        let bottom = Math.floor((entity.y + (entity.height || 40)) / this.tileSize);
 
-        // Csak akkor nézzük az ütközést, ha a térképen belül vagyunk függőlegesen
         if (map[bottom]) {
             if (map[bottom][left] === 1 || map[bottom][right] === 1) {
-                entity.y = bottom * this.tileSize - entity.height;
+                entity.y = bottom * this.tileSize - (entity.height || 40);
                 entity.vy = 0;
                 entity.grounded = true;
             } else {
                 entity.grounded = false;
             }
-        } else {
-            // Ha kirepülne a pálya fölé vagy alá, ne legyen grounded
-            entity.grounded = false;
         }
     }
 }
