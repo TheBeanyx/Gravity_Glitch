@@ -1,23 +1,30 @@
 class InputHandler {
     constructor() {
+        // Ebben az objektumban tároljuk, melyik gomb van lenyomva
         this.keys = {};
         
+        // Billentyű lenyomása
         window.addEventListener('keydown', (e) => {
-            // Minden gombot kisbetűvé alakítunk a tárolásnál
-            this.keys[e.key.toLowerCase()] = true;
-            // A Space-t külön kezeljük, mert az nem betű
-            if (e.key === " ") this.keys["space"] = true;
+            // Megakadályozzuk, hogy a Space vagy a nyilak görgessék az oldalt
+            if (["Space", "ArrowUp", "ArrowDown", "KeyW", "KeyS"].includes(e.code)) {
+                e.preventDefault();
+            }
+            this.keys[e.code] = true;
+            // Konzolon ellenőrizheted, hogy mi a gomb kódja, ha nem működne
+            // console.log("Lenyomva:", e.code); 
         });
 
+        // Billentyű felengedése
         window.addEventListener('keyup', (e) => {
-            this.keys[e.key.toLowerCase()] = false;
-            if (e.key === " ") this.keys["space"] = false;
+            this.keys[e.code] = false;
         });
     }
 
-    isPressed(key) {
-        // Ha " " (space) érkezik, nézzük a "space" kulcsot is
-        if (key === " ") return this.keys["space"] || this.keys[" "];
-        return this.keys[key.toLowerCase()] === true;
+    /**
+     * Megnézi, hogy egy adott gomb le van-e nyomva.
+     * Használat: input.isPressed('KeyW') vagy input.isPressed('Space')
+     */
+    isPressed(code) {
+        return this.keys[code] === true;
     }
 }
