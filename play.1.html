@@ -2,19 +2,15 @@
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <title>Gravity Glitch - Sector 01</title>
+    <title>The Compiler's Nightmare | Sector 01</title>
     <style>
         body { margin: 0; background: #000; overflow: hidden; }
         canvas { display: block; image-rendering: pixelated; }
-        #os-ui {
-            position: absolute; top: 15px; left: 15px;
-            color: #00d4ff; font-family: 'Courier New', monospace;
-            z-index: 100; pointer-events: none;
-        }
+        #ui { position: absolute; top: 15px; left: 15px; color: #00d4ff; font-family: monospace; z-index: 100; }
     </style>
 </head>
 <body>
-    <div id="os-ui">SYSTEM_NODE: <span style="color:#0f0">STABLE</span></div>
+    <div id="ui">SECTOR_01: <span id="status" style="color:#0f0">STABLE</span></div>
     <canvas id="gameCanvas"></canvas>
 
     <script src="js/levels.js"></script>
@@ -29,12 +25,13 @@
         window.onload = () => {
             try {
                 window.game = new NightmareEngine();
-                // Kezdőpont a fű felett
+                // Kezdőpont a fű felett (X: 100, Y: 300)
                 window.game.player.x = 100;
                 window.game.player.y = 300;
                 console.log("Sector 01 Initialized.");
             } catch (e) {
-                console.error("Critical System Failure:", e);
+                document.getElementById('status').innerText = "ERROR";
+                console.error(e);
             }
         };
     </script>
