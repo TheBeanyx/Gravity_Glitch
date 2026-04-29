@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gravity Glitch | Settings</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500;700&family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .settings-container {
+            background: var(--panel-bg);
+            border: 1px solid var(--secondary);
+            padding: 40px;
+            width: 600px;
+            box-shadow: 0 0 30px rgba(255, 0, 234, 0.15);
+            position: relative;
+        }
+
+        .settings-container::before {
+            content: "Gravity Glitch";
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: var(--bg-color);
+            padding: 0 10px;
+            color: var(--secondary);
+            font-size: 0.8rem;
+        }
+
+        .setting-group {
+            margin-bottom: 30px;
+        }
+
+        .setting-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: var(--primary);
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            border: 1px solid var(--primary);
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            background: var(--primary);
+            border: 2px solid white;
+            margin-top: -9px;
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        .toggle-btn {
+            background: transparent;
+            border: 1px solid var(--secondary);
+            color: var(--secondary);
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: var(--font-main);
+            transition: 0.3s;
+        }
+
+        .toggle-btn.active {
+            background: var(--secondary);
+            color: white;
+            box-shadow: 0 0 15px var(--secondary);
+        }
+
+        .footer-nav {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="overlay"></div>
+
+    <main class="settings-container">
+        <h1 class="glitch" style="font-size: 2rem;" data-text="SYSTEM_CONFIGURATION">BEÁLLÍTÁSOK</h1>
+
+        <div class="setting-group">
+            <div class="setting-label">
+                <span>HANGERŐ</span>
+                <span id="vol-val">75%</span>
+            </div>
+            <input type="range" id="vol-slider" min="0" max="100" value="75" oninput="updateVal('vol-val', this.value + '%')">
+        </div>
+
+        <div class="setting-group">
+            <div class="setting-label">
+                <span>RÉSZECSKE_SŰRŰSÉG</span>
+                <span id="part-val">ULTRA</span>
+            </div>
+            <input type="range" id="part-slider" min="1" max="3" value="3" oninput="updateDensity(this.value)">
+        </div>
+
+        <div class="setting-group">
+            <div class="setting-label">KÉPERNYŐ_MÓD</div>
+            <div style="display: flex; gap: 10px;" id="screen-mode-group">
+                <button class="toggle-btn active" data-mode="WINDOW">ABLAK</button>
+                <button class="toggle-btn" data-mode="FULLSCREEN">TELJES_KÉPERNYŐ</button>
+            </div>
+        </div>
+
+        <div class="footer-nav">
+            <button class="menu-btn" onclick="location.href='index.html'">MÓDOSÍTÁSOK ELVETÉSE</button>
+            <button id="save-btn" class="menu-btn primary" onclick="saveAndBack()">MÓDOSÍTÁSOK MEGTARTÁSA</button>
+        </div>
+    </main>
+
+    <script>
+        window.onload = function() {
+            if (localStorage.getItem('masterVolume')) {
+                const vol = localStorage.getItem('masterVolume');
+                document.getElementById('vol-slider').value = vol;
+                document.getElementById('vol-val').innerText = vol + '%';
+            }
+
+            if (localStorage.getItem('particleDensity')) {
+                const dens = localStorage.getItem('particleDensity');
+                document.getElementById('part-slider').value = dens;
+                updateDensity(dens);
+            }
+
+            if (localStorage.getItem('screenMode')) {
+                const mode = localStorage.getItem('screenMode');
+                btns.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.getAttribute('data-mode') === mode) {
+                        btn.classList.add('active');
+                    }
+                });
+            }
+        };
+
+        function updateVal(id, val) {
+            document.getElementById(id).innerText = val;
+        }
+
+        function updateDensity(val) {
+            const label = document.getElementById('part-val');
+            if(val == 1) label.innerText = "LOW";
+            if(val == 2) label.innerText = "MEDIUM";
+            if(val == 3) label.innerText = "ULTRA";
+        }
+
+        function saveAndBack() {
+            const volume = document.getElementById('vol-slider').value;
+            const density = document.getElementById('part-slider').value;
+            const activeMode = document.querySelector('.toggle-btn.active').getAttribute('data-mode');
+
+            localStorage.setItem('masterVolume', volume);
+            localStorage.setItem('particleDensity', density);
+            localStorage.setItem('screenMode', activeMode);
+
+            // Vizualis visszajelzés az alert helyett
+            const saveBtn = document.getElementById('save-btn');
+            const originalText = saveBtn.innerText;
+            
+            saveBtn.innerText = "SYNC_COMPLETE";
+            saveBtn.style.background = "#00ff00";
+            saveBtn.style.color = "#000";
+            
+            // Rövid várakozás a mentési érzet kedvéért, majd visszalépés
+            setTimeout(() => {
+                location.href = 'index.html';
+            }, 800);
+        }
+
+        const btns = document.querySelectorAll('.toggle-btn');
+        btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                btns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

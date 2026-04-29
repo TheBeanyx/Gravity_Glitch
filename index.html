@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gravity Glitch | Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500;700&family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+    <div id="overlay"></div>
+
+    <main class="dashboard">
+        
+        <aside class="side-panel left">
+            <div class="panel-header">Gravity Glitch</div>
+            <div class="stats-container">
+                <div class="stat-item">
+                    <span class="label">Status:</span>
+                    <span class="value active">READY</span>
+                </div>
+                <div class="stat-item">
+                    <span class="label">Status:</span>
+                    <div class="bar"><div class="fill" style="width: 62%;"></div></div>
+                </div>
+                <div class="stat-item">
+                    <span class="label">Verzió:</span>
+                    <span class="value" style="color: #ff00ea;">v1.2</span>
+                </div>
+            </div>
+            <div class="log-console" id="console-output">
+                > A rednszer készen áll...<br>
+                > Induljon a játék!<br>
+                > Kattints a Start Gombra!
+            </div>
+        </aside>
+
+        <section class="main-content">
+            <header class="title-section">
+                <h1 class="glitch" data-text="COMPILER'S NIGHTMARE">Gravity Glitch</h1>
+                <p class="subtitle">Élvezze a gravitáció hatását: Ugráljon mint egy profi játékos!</p>
+            </header>
+
+            <nav class="menu-nav">
+                <button class="menu-btn primary" onclick="location.href='start.play.html'">JÁTÉK INDITÁSA</button>
+                <button class="menu-btn" onclick="location.href='settings.html'">BEÁLLÍTÁSOK</button>
+                <button class="menu-btn" onclick="location.href='control.html'">NAVIGÁCIÓ</button>
+            </nav>
+        </section>
+
+        <aside class="side-panel right">
+            <div class="panel-header">VERZIÓ_ADATOK</div>
+            <div class="version-display">
+                <p>v1.2</p>
+                <p>KIADVA: 2026.04.28.</p>
+                <p>STATUS: VERZIÓ: STABIL</p>
+            </div>
+            <div class="warning-box">
+                FIGYELMEZTETÉS:   <br> A verzióban lehetnek hibák! 
+            </div>
+        </aside>
+
+    </main>
+
+    <script>
+
+        // Egy kis vizuális extra: véletlenszerű számok pörgése a konzolon
+        setInterval(() => {
+            const consoleOut = document.getElementById('console-output');
+            if(Math.random() > 0.8) {
+                consoleOut.innerHTML += `<br>> ping... ${Math.floor(Math.random() * 50)}ms`;
+                if(consoleOut.innerHTML.length > 500) consoleOut.innerHTML = "> Buffering...";
+                consoleOut.scrollTop = consoleOut.scrollHeight;
+            }
+        }, 2000);
+    </script>
+
+</body>
+</html>

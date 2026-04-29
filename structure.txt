@@ -1,0 +1,25 @@
+/szuper-jatek-projekt
+│
+├── index.html          # A fő belépési pont
+├── css/
+│   ├── main.css        # Alap stílusok
+│   ├── ui.css          # A HUD, menük és gombok stílusa
+│   └── animations.css  # Speciális CSS animációk (glitch effect, stb.)
+│
+├── assets/             # Képek, hangok helye
+│
+└── js/
+    ├── main.js         # A játék indítása és a fő ciklus (Game Loop)
+    ├── input.js        # Billentyűzet és egér kezelés
+    ├── player.js       # A karakter logikája és fizikája
+    ├── camera.js       # A kameramozgás (követés)
+    ├── particles.js    # Részecskerendszer a robbanásokhoz
+    ├── levels.js       # A 10+ szint adatait tartalmazó óriási adatfájl
+   ├── game_state.js #A biztonsági kódolás
+    ├── enemies/
+    │   ├── basicEnemy.js
+    │   ├── bulletHellBoss.js
+    │   └── patterns.js # A golyózápor matematikai mintái (sin/cos)
+    └── engine/
+        ├── physics.js  # Ütközésdetektálás és gravitáció
+        └── renderer.js # A rajzolásért felelős modul

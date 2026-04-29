@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gravity Glitch | Játék indítása...</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;700&family=Orbitron:wght@900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        body {
+            background-color: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        /* Betöltő sáv kerete */
+        .loading-box {
+            width: 400px;
+            padding: 20px;
+            border: 1px solid var(--primary);
+            background: rgba(0, 212, 255, 0.05);
+            position: relative;
+        }
+
+        /* Futó progress bar */
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: #111;
+            margin: 20px 0;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: var(--primary);
+            box-shadow: 0 0 15px var(--primary);
+            transition: width 0.1s linear;
+        }
+
+        .status-text {
+            font-family: var(--font-main);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            height: 20px;
+        }
+
+        .level-badge {
+            font-family: var(--font-title);
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--secondary);
+            text-shadow: 0 0 10px var(--secondary);
+        }
+
+        /* Hacker-stílusú kódlecsorgás az oldalon */
+        #loading-logs {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            text-align: left;
+            font-size: 0.7rem;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="overlay"></div>
+
+    <div class="level-badge" id="level-display">SZINT_??</div>
+    
+    <div class="loading-box">
+        <div class="status-text" id="status">PÁLYA BETÖLTÉSE</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="bar"></div>
+        </div>
+        <div style="font-size: 0.6rem; opacity: 0.7;">ENCRYPTION_KEY: AES-256-GCM_ACTIVE</div>
+    </div>
+
+    <div id="loading-logs"></div>
+
+    <script src="js/game_state.js"></script>
+
+    <script>
+        const statusEl = document.getElementById('status');
+        const barEl = document.getElementById('bar');
+        const logsEl = document.getElementById('loading-logs');
+        const levelEl = document.getElementById('level-display');
+
+        const logs = [
+            "Pálya betöltése.",
+            "Pálya betöltése..",
+            "Pálya betöltése...",
+            "Pálya betöltése.",
+            "Pálya betöltése..",
+            "Pálya betöltése..."
+        ];
+
+        async function initSequence() {
+            // 1. Szint lekérése a "titkosított" rendszerből
+            const targetLevel = GameState.getReachedLevel();
+            levelEl.innerText = `SECTOR_${targetLevel.toString().padStart(2, '0')}`;
+
+            // 2. Szimulált betöltési folyamat (látvány miatt)
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 5;
+                if (progress > 100) progress = 100;
+                
+                barEl.style.width = progress + "%";
+                
+                // Véletlenszerű logok kiírása
+                if (Math.random() > 0.8 && logs.length > 0) {
+                    const log = logs.shift();
+                    statusEl.innerText = log.toUpperCase();
+                    logsEl.innerHTML += `> ${log}<br>`;
+                }
+
+                if (progress === 100) {
+                    clearInterval(interval);
+                    statusEl.innerText = "Pálya betöltve!";
+                    statusEl.style.color = "#0f0";
+                    
+                    // 3. Átdobás a tényleges fájlra
+                    setTimeout(() => {
+                        location.href = `play.${targetLevel}.html`;
+                    }, 800);
+                }
+            }, 50);
+        }
+
+        // Indítás
+        window.onload = initSequence;
+    </script>
+</body>
+</html>

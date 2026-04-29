@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gravity Glitch | Navigáció</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500;700&family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            background: var(--panel-bg);
+            border: 1px solid var(--primary);
+            padding: 40px;
+            max-width: 900px;
+            box-shadow: 0 0 40px rgba(0, 212, 255, 0.1);
+        }
+
+        .key-map {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+
+        .key-unit {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 10px;
+            border-left: 3px solid transparent;
+            transition: 0.3s;
+        }
+
+        .key-unit:hover {
+            border-left: 3px solid var(--secondary);
+            background: rgba(255, 0, 234, 0.05);
+        }
+
+        kbd {
+            background: #1a1a1a;
+            border: 2px solid var(--primary);
+            border-radius: 5px;
+            color: var(--primary);
+            display: inline-block;
+            font-family: var(--font-main);
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 5px 15px;
+            min-width: 40px;
+            text-align: center;
+            box-shadow: 0 4px 0 var(--primary), 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+
+        .key-desc {
+            color: #ccc;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .function-tag {
+            color: var(--secondary);
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .visual-aid {
+            border-left: 1px solid #333;
+            padding-left: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .status-box {
+            border: 1px dashed var(--secondary);
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: var(--secondary);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="overlay"></div>
+
+    <main class="controls-grid">
+        <div class="key-map">
+            <h1 class="glitch" style="font-size: 1.8rem;" data-text="INPUT_MAPPING">IRÁNYÍTÁS</h1>
+            
+            <div class="key-unit">
+                <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>
+                <span class="key-desc"><span class="function-tag">[Mozgatás]</span> Navigáció a játékban</span>
+            </div>
+
+            <div class="key-unit">
+                <kbd>Space</kbd>
+                <span class="key-desc"><span class="function-tag">[UGRÁS]</span>UGORJON MAGASRA!</span>
+            </div>
+
+            <div class="key-unit">
+                <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd>
+                <span class="key-desc"><span class="function-tag">[Eszközök]</span> Váltson eszközt a számok segítségével</span>
+            </div>
+
+            <div class="key-unit">
+                <kbd>E</kbd>
+                <span class="key-desc"><span class="function-tag">[INTERAKCIÓ]</span>LÉPJEN KONATKBA A TÁRGYAKKAL: NYISSON AJTÓKAT</span>
+            </div>
+
+            <div class="key-unit">
+                <kbd>I</kbd>
+                <span class="key-desc"><span class="function-tag">[INFO]</span> TUDJON MEG TÖBBET A TÁRGYRÓL</span>
+            </div>
+
+            <div class="key-unit">
+                <kbd>B</kbd>
+                <span class="key-desc"><span class="function-tag">[ÉPÍTÉS/PAJZS]</span> ÉPÍTSEN FALAKAT/LÉTRÁKAT,VILÁGŰR MÓDBAN: HASZNÁLJA PAJZSKÉNT</span>
+            </div>
+
+            <div class="key-unit">
+                <kbd>ESC</kbd>
+                <span class="key-desc"><span class="function-tag">[SZÜNET]</span> FÜGGESZE FEL A JÁTÉKOT PIHENJEN!</span>
+            </div>
+        </div>
+
+        <div class="visual-aid">
+            <div class="panel-header">TOVÁBBI IRÁNYÍTÁSI MÓD</div>
+            <p style="font-size: 0.8rem; line-height: 1.6;">
+                Használd ki a sűrlódás csökkenést a  <span style="color: var(--primary);">VILÁGŰR</span> módban.<br><br>
+                A <span style="color: var(--secondary);"> VILÁGŰR</span> fázisban mozog minden irányban szabadon.
+            </p>
+            
+            <div class="status-box">
+                VILÁGŰR módban PAJZS: B<br>
+                Gravitáció módban ÉPÍTÉS: B<br>
+            </div>
+
+            <button class="menu-btn primary" style="margin-top: 30px;" onclick="location.href='index.html'">VISSZA A DASHBOARDRA</button>
+        </div>
+    </main>
+
+    <script>
+        // Interaktív visszajelzés: ha leütnek egy billentyűt, villanjon meg a leírása
+        window.addEventListener('keydown', (e) => {
+            const key = e.key.toUpperCase();
+            const kbds = document.querySelectorAll('kbd');
+            kbds.forEach(k => {
+                if(k.innerText === key || (key === 'ESCAPE' && k.innerText === 'ESC')) {
+                    k.style.background = 'var(--secondary)';
+                    k.style.color = 'white';
+                    setTimeout(() => {
+                        k.style.background = '#1a1a1a';
+                        k.style.color = 'var(--primary)';
+                    }, 200);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
