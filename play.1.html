@@ -2,118 +2,66 @@
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Compiler's Nightmare | Sector 01</title>
-    <link rel="stylesheet" href="css/main.css">
+    <title>Gravity Glitch - Sector 01</title>
     <style>
-        body, html { margin: 0; padding: 0; overflow: hidden; background: #000; width: 100vw; height: 100vh; }
-        canvas { display: block; image-rendering: pixelated; background: #050505; }
-        #game-ui { position: absolute; top: 20px; left: 20px; pointer-events: none; font-family: 'Fira Code', monospace; z-index: 100; color: #00d4ff; text-shadow: 1px 1px 2px #000; }
+        body { margin: 0; background: #000; overflow: hidden; }
+        canvas { display: block; }
+        #status-ui { 
+            position: absolute; top: 10px; left: 10px; 
+            color: #0f0; font-family: monospace; z-index: 100; 
+        }
     </style>
 </head>
 <body>
-
-    <div id="game-ui">
-        <div>SYSTEM_STATUS: <span style="color: #0f0;">ONLINE</span></div>
-        <div>POS: <span id="pos-display">0,0</span></div>
-        <div id="load-status" style="color: orange; font-size: 10px;">INITIALIZING_SCRIPTS...</div>
-    </div>
-
+    <div id="status-ui">SYSTEM_STATUS: <span id="status">INIT...</span></div>
     <canvas id="gameCanvas"></canvas>
 
-    <script src="./js/game_state.js"></script>
-    <script src="./js/input.js"></script>
-    <script src="./js/engine/physics.js"></script>
-    <script src="./js/engine/renderer.js"></script>
-    <script src="./js/camera.js"></script>
-    <script src="./js/player.js"></script>
-    <script src="./js/levels.js"></script>
-    <script src="./js/particles.js"></script>
-    <script src="./js/enemies/patterns.js"></script>
-    <script src="./js/enemies/basicEnemy.js"></script>
-    <script src="./js/main.js"></script>
+    <script src="js/levels.js"></script>
+    <script src="js/input.js"></script>
+    <script src="js/engine/physics.js"></script>
+    <script src="js/engine/renderer.js"></script>
+    <script src="js/camera.js"></script>
+    <script src="js/player.js"></script>
+    <script src="js/main.js"></script>
 
     <script>
-        // Ez a rész akkor fut le, ha minden fenti script betöltődött
-        window.addEventListener('load', () => {
-            const canvas = document.getElementById('gameCanvas');
-            const posDisplay = document.getElementById('pos-display');
-            const loadStatus = document.getElementById('load-status');
+        window.onload = () => {
+            try {
+                window.game = new NightmareEngine();
+                document.getElementById('status').innerText = "RUNNING";
+                
+                const grassImg = new Image();
+                // Base64 textúra a CORS hibák ellen
+                grassImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAUVBMVEUAAAAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpB2un0sAAAAG3RSTlMAERITFBUWFxgZGhscHR4fICEiIyQlJicoKSor9pZ9CgAAAGVJREFUeNrt07ENwDAMA0EL6f7Lp0uHAnmBA9yByAtS6pXWujZ6Z9Z656z17vTP7PTv9I/07/SP9I/07/SP9I/0y8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy/v1By7mAnm9UksMAAAAAElFTkSuQmCC";
 
-            // 1. BASE64 TEXTÚRÁK (Garantáltan működik GitHub-on is, nincs 404 hiba)
-            const grassImg = new Image();
-            grassImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAUVBMVEUAAAAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpAyWpB2un0sAAAAG3RSTlMAERITFBUWFxgZGhscHR4fICEiIyQlJicoKSor9pZ9CgAAAGVJREFUeNrt07ENwDAMA0EL6f7Lp0uHAnmBA9yByAtS6pXWujZ6Z9Z656z17vTP7PTv9I/07/SP9I/07/SP9I/0y8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy8vLy/v1By7mAnm9UksMAAAAAElFTkSuQmCC";
-
-            const bgImg = new Image();
-            bgImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAALklEQVRo3u3XMQEAAAgDMMO/tIewnwdI0NSuOkpERERERERERERERERERERERX99WscBf9u7zQAAAABJRU5ErkJggg==";
-
-            function initGameHooks() {
-                // Ellenőrizzük, hogy a fő motor (NightmareEngine) elindult-e
-                if (typeof window.game === 'undefined') {
-                    setTimeout(initGameHooks, 100);
-                    return;
-                }
-
-                loadStatus.innerText = "SCRIPTS_LOADED_READY";
-                setTimeout(() => loadStatus.style.display = 'none', 2000);
-
-                // Kezdőértékek kényszerítése
-                window.game.player.x = 150;
-                window.game.player.y = 150;
-                window.game.mode = 'PLATFORMER';
-
-                // Renderer felülírása a beágyazott képekkel
+                // Renderer felülírása a biztonságos képrajzoláshoz
                 window.game.renderer.drawMap = function(map, camera) {
                     const tileSize = 50;
-                    const ctx = this.ctx;
-
-                    // Háttér rajzolása
-                    ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
-
-                    ctx.save();
-                    ctx.translate(-camera.x, -camera.y);
-
-                    for (let row = 0; row < map.length; row++) {
-                        if (!map[row]) continue;
-                        for (let col = 0; col < map[row].length; col++) {
-                            let tile = map[row][col];
-                            if (tile === 1) { 
-                                ctx.drawImage(grassImg, col * tileSize, row * tileSize, tileSize, tileSize);
-                            }
-                            if (tile === 3) {
-                                ctx.fillStyle = '#ff00ea';
-                                ctx.shadowBlur = 15;
-                                ctx.shadowColor = '#ff00ea';
-                                ctx.fillRect(col * tileSize + 10, row * tileSize, 30, 50);
-                                ctx.shadowBlur = 0;
+                    if (!map) return;
+                    for (let r = 0; r < map.length; r++) {
+                        for (let c = 0; c < map[r].length; c++) {
+                            if (map[r][c] === 1) {
+                                // Csak akkor rajzolunk, ha a kép nem "törött"
+                                if (grassImg.complete && grassImg.naturalWidth !== 0) {
+                                    this.ctx.drawImage(grassImg, c * tileSize, r * tileSize, tileSize, tileSize);
+                                } else {
+                                    this.ctx.fillStyle = "#2d5a27";
+                                    this.ctx.fillRect(c * tileSize, r * tileSize, tileSize, tileSize);
+                                }
                             }
                         }
                     }
-                    ctx.restore();
                 };
 
-                // Játékos rajzolásának javítása (hogy mindig látsszon)
-                window.game.player.draw = function(ctx) {
-                    ctx.save();
-                    ctx.translate(-window.game.camera.x, -window.game.camera.y);
-                    
-                    // Neon kék doboz
-                    ctx.fillStyle = "#00d4ff";
-                    ctx.shadowBlur = 20;
-                    ctx.shadowColor = "#00d4ff";
-                    ctx.fillRect(this.x, this.y, this.width, this.height);
-                    
-                    // Kis fehér pont a "fejének"
-                    ctx.fillStyle = "#fff";
-                    ctx.fillRect(this.x + 10, this.y + 10, 10, 10);
-                    
-                    ctx.restore();
-                    posDisplay.innerText = `${Math.floor(this.x)}, ${Math.floor(this.y)}`;
-                };
+                // Játékos kezdőpozíciója a fű felett
+                window.game.player.x = 100;
+                window.game.player.y = 300;
+
+            } catch (e) {
+                document.getElementById('status').innerText = "FATAL ERROR";
+                console.error("Initialization failed:", e);
             }
-
-            initGameHooks();
-        });
+        };
     </script>
 </body>
 </html>
