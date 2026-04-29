@@ -24,14 +24,15 @@
             try {
                 window.game = new NightmareEngine();
                 
-                // Beállítjuk a játékost a nagyított fű fölé
-                // (8. sor * 80px = 640px, tehát 550 körül jó lesz)
-                window.game.player.x = 100;
-                window.game.player.y = 500;
+                // JAVÍTOTT KEZDŐPONT: 
+                // X: 50 (pálya széle), Y: 400 (a 6. sor magassága felett)
+                window.game.player.x = 50;
+                window.game.player.y = 400; 
+                window.game.player.vy = 0;
                 
-                console.log("Sector 01: High Definition Grass Active.");
+                console.log("Sector 01: Final calibration. Player dropped on grass.");
             } catch (e) {
-                console.error("Critical System Failure:", e);
+                console.error(e);
             }
         };
     </script>
