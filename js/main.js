@@ -33,14 +33,16 @@ class NightmareEngine {
         requestAnimationFrame((t) => this.gameLoop(t));
     }
 
-    update(dt) {
-        this.player.update(this.input);
-        if (typeof LEVEL_DATA !== 'undefined') {
-            this.physics.applyPhysics(this.player, 'PLATFORMER');
-            this.physics.checkMapCollisions(this.player, LEVEL_DATA[this.currentLevel]);
-        }
-        this.camera.update(this.player);
+update(dt) {
+    // EZ A SOR KELL A MOZGÁSHOZ:
+    this.player.update(this.input); 
+
+    if (typeof LEVEL_DATA !== 'undefined') {
+        this.physics.applyPhysics(this.player);
+        this.physics.checkMapCollisions(this.player, LEVEL_DATA[this.currentLevel]);
     }
+    this.camera.update(this.player);
+}
 
     draw() {
         this.renderer.clear();
